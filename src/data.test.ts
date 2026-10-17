@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
-import { categories, priceStages, services, trainers } from "./data";
+import { categories, merch, priceStages, services, trainers } from "./data";
 
-describe("fixtures лендинга", () => {
+describe("данные лендинга", () => {
 	test("риск потери состава афиши: 23 уникальные записи, три категории и портрет каждого", () => {
 		expect(trainers).toHaveLength(23);
 		expect(new Set(trainers.map((trainer) => trainer.name)).size).toBe(23);
@@ -23,10 +23,31 @@ describe("fixtures лендинга", () => {
 			expect(trainer.individualPrice).toBeGreaterThan(trainer.groupPrice);
 		}
 	});
-	test("риск некорректных демонстрационных этапов и повторных сервисов", () => {
+	test("риск неверного удвоения цен и неполных карточек сервисов и мерча", () => {
 		expect(priceStages.map((stage) => stage.price)).toEqual([
-			9500, 11000, 12500,
+			19000, 22000, 25000,
 		]);
 		expect(new Set(services.map((service) => service.slug)).size).toBe(5);
+		expect(
+			[...new Set(trainers.map((trainer) => trainer.groupPrice))].sort(),
+		).toEqual([1800, 2400]);
+		expect([
+			trainers[0].individualPrice,
+			trainers[2].individualPrice,
+			trainers[16].individualPrice,
+		]).toEqual([11000, 13000, 7000]);
+		for (const service of services)
+			expect(
+				existsSync(
+					new URL(`../public/images/${service.avatar}`, import.meta.url),
+				),
+			).toBe(true);
+		expect(merch.map((product) => product.price)).toEqual([3000, 6000, 8000]);
+		for (const product of merch)
+			expect(
+				existsSync(
+					new URL(`../public/images/${product.image}`, import.meta.url),
+				),
+			).toBe(true);
 	});
 });

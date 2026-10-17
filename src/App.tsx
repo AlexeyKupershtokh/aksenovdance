@@ -1,15 +1,11 @@
-import { Accordion, SegmentedControl } from "@mantine/core";
+import { SegmentedControl } from "@mantine/core";
 import {
 	IconArrowDown,
 	IconArrowRight,
 	IconArrowUpRight,
 	IconCalendar,
-	IconCamera,
-	IconCheck,
 	IconMapPin,
-	IconMusic,
 	IconPhone,
-	IconShoppingBag,
 	IconSnowflake,
 } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +15,7 @@ import {
 	type Category,
 	categories,
 	imageUrl,
+	merch,
 	phone,
 	priceStages,
 	rubles,
@@ -28,19 +25,14 @@ import {
 } from "./data";
 
 function SectionTitle({
-	eyebrow,
 	title,
 	description,
 }: {
-	eyebrow: string;
 	title: string;
 	description?: string;
 }) {
 	return (
 		<div className="section-heading">
-			<AppText kind="overline" tone="accent">
-				{eyebrow}
-			</AppText>
 			<AppHeading level={2}>{title}</AppHeading>
 			{description && (
 				<AppText tone="muted" className="section-description">
@@ -53,8 +45,6 @@ function SectionTitle({
 
 export function App() {
 	const [rosterCategory, setRosterCategory] = useState<Category>("Стандарт");
-	const [priceCategory, setPriceCategory] = useState<Category>("Стандарт");
-	const [openedTrainer, setOpenedTrainer] = useState<string | null>(null);
 	const [activeSection, setActiveSection] = useState("about");
 	const navRef = useRef<HTMLElement>(null);
 
@@ -71,7 +61,7 @@ export function App() {
 				window.scrollY + window.innerHeight >=
 				document.documentElement.scrollHeight - 8
 			)
-				current = "contacts";
+				current = "merch";
 			setActiveSection(current);
 		}
 		function scheduleUpdate() {
@@ -91,19 +81,8 @@ export function App() {
 		const nav = navRef.current;
 		const item = nav?.querySelector<HTMLElement>(`[href="#${activeSection}"]`);
 		if (nav && item)
-			nav.scrollTo({
-				left: item.offsetLeft - 12,
-				behavior: "instant",
-			});
+			nav.scrollTo({ left: item.offsetLeft - 12, behavior: "instant" });
 	}, [activeSection]);
-
-	function showPrices(trainer: (typeof trainers)[number]) {
-		setPriceCategory(trainer.category);
-		setOpenedTrainer(trainer.id);
-		document
-			.getElementById("availability")
-			?.scrollIntoView({ behavior: "auto" });
-	}
 
 	return (
 		<>
@@ -124,8 +103,6 @@ export function App() {
 					<div className="header-links">
 						<a href="https://glamdance.ru/services">Сервисы</a>
 						<a href="https://glamdance.ru/tournaments">Турниры</a>
-						<span className="header-divider" />
-						<span>Танцуем вместе</span>
 					</div>
 					<AppButton
 						component="a"
@@ -156,10 +133,8 @@ export function App() {
 							<span className="title-dot">.</span>
 						</AppHeading>
 						<AppText kind="lead" tone="muted" className="hero-lead">
-							Начните год с движения.
-							<br />
-							Три дня на паркете — с любимыми тренерами и теми, кто так же
-							влюблён в танец.
+							Стандарт, латина и сибирские педагоги. Три дня групповых и
+							индивидуальных занятий.
 						</AppText>
 						<div className="hero-actions">
 							<AppButton
@@ -190,34 +165,13 @@ export function App() {
 						<img
 							className="hero-photo"
 							src={imageUrl("hero.webp")}
-							alt="Тренер показывает движение на занятии по бальным танцам"
-							width="1080"
-							height="1350"
+							alt="Пара танцует на занятии под руководством тренера"
+							width="1200"
+							height="1200"
 							fetchPriority="high"
 						/>
-						<div className="photo-label">
-							<span className="small-star">✳</span>
-							<div>
-								<AppText kind="label">Больше, чем тренировка</AppText>
-								<AppText kind="compact" tone="muted">
-									Место встречи своих людей
-								</AppText>
-							</div>
-						</div>
-						<div className="year-stamp" aria-hidden="true">
-							ЗИМА
-							<br />
-							<span>2027</span>
-						</div>
 					</div>
 				</section>
-				<div className="demo-note wrap">
-					<span className="demo-badge">Пример лендинга</span>
-					<AppText kind="compact" tone="muted">
-						Цены, свободные места и даты повышения — демонстрационные. Условия и
-						участие сервисов уточняйте у организатора.
-					</AppText>
-				</div>
 				<div className="section-nav-shell">
 					<div className="nav-inner wrap">
 						<nav
@@ -235,19 +189,12 @@ export function App() {
 								</a>
 							))}
 						</nav>
-						<a className="nav-date" href="#contacts">
-							5–7 января <IconArrowUpRight size={16} />
-						</a>
 					</div>
 				</div>
 
-				<section id="about" className="section wrap">
-					<div className="about-top">
-						<SectionTitle
-							eyebrow="Встретимся на паркете"
-							title="Три дня. Один язык — танец."
-							description="Стандарт, латина и сибирские педагоги. Соберите свои сборы: от работы над базой до индивидуальных деталей, которые меняют весь танец."
-						/>
+				<section id="about" className="section wrap about-layout">
+					<div className="about-copy">
+						<SectionTitle title="Участие в сборах" />
 						<div className="about-facts">
 							<div>
 								<IconCalendar />
@@ -263,65 +210,57 @@ export function App() {
 								<div>
 									<AppText kind="label">МЦ «Содружество»</AppText>
 									<AppText kind="compact" tone="muted">
-										Новосибирск, Кропоткина, 119/3
+										Новосибирск, ул. Кропоткина, 119/3
 									</AppText>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div className="pricing-heading">
-						<AppHeading level={3} kind="card">
-							Спланируйте участие заранее
-						</AppHeading>
-						<span className="demo-badge">Пример стоимости</span>
-					</div>
-					<div className="price-stages">
-						{priceStages.map((stage, index) => (
-							<article
-								className={`price-stage ${index === 0 ? "price-stage-first" : ""}`}
-								key={stage.label}
-							>
-								<div className="price-stage-top">
+						<div className="pricing-heading">
+							<AppHeading level={3} kind="card">
+								Пакет групповых занятий
+							</AppHeading>
+						</div>
+						<div className="price-stages">
+							{priceStages.map((stage, index) => (
+								<article
+									className={`price-stage ${index === 0 ? "price-stage-first" : ""}`}
+									key={stage.label}
+								>
 									<AppText kind="label">{stage.label}</AppText>
-									<span className="stage-number">0{index + 1}</span>
-								</div>
-								<AppText kind="compact" tone="muted">
-									{stage.date}
-								</AppText>
-								<div className="stage-price">
-									{rubles(stage.price)}
-									<span> / участник</span>
-								</div>
-								<AppText kind="compact" tone="muted">
-									Пример пакета групповых занятий
-								</AppText>
-							</article>
-						))}
+									<AppText kind="compact" tone="muted">
+										{stage.date}
+									</AppText>
+									<div className="stage-price">
+										{rubles(stage.price)}
+										<span> / участник</span>
+									</div>
+								</article>
+							))}
+						</div>
+						<AppText kind="compact" tone="muted" className="price-footnote">
+							Индивидуальные занятия оплачиваются отдельно.
+						</AppText>
 					</div>
-					<AppText kind="compact" tone="muted" className="price-footnote">
-						Состав пакета и продолжительность занятий уточняются. Индивидуальные
-						уроки оплачиваются отдельно. Окончательную стоимость подтверждает
-						Александр.
-					</AppText>
+					<a
+						className="camp-poster"
+						href={imageUrl("poster.webp")}
+						target="_blank"
+						rel="noreferrer"
+						aria-label="Открыть афишу сборов"
+					>
+						<img
+							src={imageUrl("poster.webp")}
+							alt="Афиша сборов «кАллигрАфия телА» со всеми тренерами"
+							width="900"
+							height="1600"
+							loading="lazy"
+						/>
+					</a>
 				</section>
 
 				<section id="trainers" className="section section-tinted">
 					<div className="wrap">
-						<div className="section-top">
-							<SectionTitle
-								eyebrow="Учиться у тех, кто вдохновляет"
-								title="Ваши проводники в танце"
-								description="Знакомые имена и новые точки роста. Выберите направление и найдите своего тренера."
-							/>
-							<a
-								className="text-link poster-link"
-								href={imageUrl("poster.webp")}
-								target="_blank"
-								rel="noreferrer"
-							>
-								Открыть афишу <IconArrowUpRight size={17} />
-							</a>
-						</div>
+						<SectionTitle title="Ваши проводники в танце" />
 						<SegmentedControl
 							className="category-tabs roster-tabs"
 							aria-label="Направление тренеров"
@@ -331,7 +270,7 @@ export function App() {
 						/>
 						<div className="trainer-grid" aria-live="polite">
 							{trainers
-								.filter((t) => t.category === rosterCategory)
+								.filter((trainer) => trainer.category === rosterCategory)
 								.map((trainer) => (
 									<article key={trainer.id} className="trainer-card">
 										<img
@@ -341,198 +280,82 @@ export function App() {
 											height="82"
 											loading="lazy"
 										/>
-										<AppText kind="meta" tone="accent">
-											{trainer.category}
-										</AppText>
 										<AppHeading level={3} kind="card">
 											{trainer.name}
 										</AppHeading>
+										<span
+											className={`availability-status ${trainer.slots === 0 ? "sold-out" : trainer.slots < 3 ? "few-slots" : ""}`}
+										>
+											<span className="status-dot" />
+											{trainer.slots === 0
+												? "Лист ожидания"
+												: `Свободных мест: ${trainer.slots}`}
+										</span>
+										<dl className="trainer-prices">
+											<div>
+												<AppText component="dt" kind="compact" tone="muted">
+													Групповое
+												</AppText>
+												<AppText component="dd" kind="label">
+													{rubles(trainer.groupPrice)}
+													<span className="price-unit"> / чел.</span>
+												</AppText>
+											</div>
+											<div>
+												<AppText component="dt" kind="compact" tone="muted">
+													Индивидуальное
+												</AppText>
+												<AppText component="dd" kind="label">
+													{rubles(trainer.individualPrice)}
+													<span className="price-unit"> / занятие</span>
+												</AppText>
+											</div>
+										</dl>
 										<AppButton
+											component="a"
+											href={phone}
 											intent="quiet"
 											fullWidth
-											onClick={() => showPrices(trainer)}
-											rightSection={<IconArrowUpRight size={16} />}
+											aria-label={`${trainer.slots ? "Записаться" : "Лист ожидания"}: ${trainer.name}`}
 										>
-											Места и цены
+											{trainer.slots ? "Записаться" : "Лист ожидания"}
 										</AppButton>
 									</article>
 								))}
 						</div>
-						<AppText kind="compact" tone="muted" className="roster-note">
-							Состав — по предоставленной афише. Актуальное расписание и участие
-							педагогов подтвердит организатор.
-						</AppText>
-					</div>
-				</section>
-
-				<section id="availability" className="section wrap">
-					<div className="section-top">
-						<SectionTitle
-							eyebrow="Найдите время для своего роста"
-							title="Место для вашего танца"
-							description="Посмотрите доступность тренеров и стоимость форматов. Для записи и согласования времени свяжитесь с Александром."
-						/>
-						<span className="demo-badge">Места и цены — пример</span>
-					</div>
-					<SegmentedControl
-						className="category-tabs availability-tabs"
-						aria-label="Направление занятий"
-						value={priceCategory}
-						onChange={(value) => {
-							setPriceCategory(value as Category);
-							setOpenedTrainer(null);
-						}}
-						data={categories.map((value) => ({ value, label: value }))}
-					/>
-					<div className="availability-table">
-						<div className="availability-table-head">
-							<AppText kind="meta">Тренер</AppText>
-							<AppText kind="meta">Индивидуальные места · пример</AppText>
-						</div>
-						<Accordion
-							value={openedTrainer}
-							onChange={setOpenedTrainer}
-							className="price-accordion"
-						>
-							{trainers
-								.filter((t) => t.category === priceCategory)
-								.map((trainer) => (
-									<Accordion.Item value={trainer.id} key={trainer.id}>
-										<Accordion.Control>
-											<div className="availability-row">
-												<div className="trainer-identity">
-													<img
-														src={imageUrl(trainer.image)}
-														alt=""
-														width="46"
-														height="46"
-														loading="lazy"
-													/>
-													<AppText component="span" kind="label">
-														{trainer.name}
-													</AppText>
-												</div>
-												<span
-													className={`availability-status ${trainer.slots === 0 ? "sold-out" : trainer.slots < 3 ? "few-slots" : ""}`}
-												>
-													<span className="status-dot" />
-													{trainer.slots === 0
-														? "Лист ожидания"
-														: `Осталось мест: ${trainer.slots}`}
-												</span>
-											</div>
-										</Accordion.Control>
-										<Accordion.Panel>
-											<div className="lesson-details">
-												<div>
-													<AppText kind="compact" tone="muted">
-														Групповое занятие
-													</AppText>
-													<AppHeading level={3} kind="card">
-														{rubles(trainer.groupPrice)}{" "}
-														<span className="price-unit">/ человек</span>
-													</AppHeading>
-												</div>
-												<div>
-													<AppText kind="compact" tone="muted">
-														Индивидуальное занятие
-													</AppText>
-													<AppHeading level={3} kind="card">
-														{rubles(trainer.individualPrice)}{" "}
-														<span className="price-unit">/ занятие</span>
-													</AppHeading>
-												</div>
-												<AppButton
-													component="a"
-													href={phone}
-													intent="primary"
-													rightSection={<IconPhone size={16} />}
-												>
-													{trainer.slots
-														? "Уточнить запись"
-														: "Уточнить лист ожидания"}
-												</AppButton>
-												<AppText
-													kind="compact"
-													tone="muted"
-													className="lesson-disclaimer"
-												>
-													Демонстрационные цены и остатки. Длительность, формат,
-													цену за пару и время занятия уточняйте у организатора.
-												</AppText>
-											</div>
-										</Accordion.Panel>
-									</Accordion.Item>
-								))}
-						</Accordion>
-					</div>
-					<div className="contact-hint">
-						<IconPhone size={20} />
-						<AppText kind="compact">
-							Не знаете, кого выбрать? Александр поможет составить программу:{" "}
-							<a href={phone}>+7 (913) 907-8-777</a>
-						</AppText>
 					</div>
 				</section>
 
 				<section id="experience" className="section experience-section">
 					<div className="wrap">
-						<SectionTitle
-							eyebrow="Всё складывается в атмосферу"
-							title="Между занятиями — тоже жизнь"
-							description="Музыка, встречи, красивые кадры и любимые танцевальные бренды. Собрали идеи для пространства, в котором хочется остаться."
-						/>
-						<div className="experience-grid">
-							<article className="live-card">
-								<IconMusic size={28} stroke={1.5} />
-								<AppText kind="overline" tone="inverseMuted">
-									В ритме сборов
+						<SectionTitle title="Музыка, фото и магазины" />
+						<div className="live-event">
+							<a
+								className="music-poster"
+								href={imageUrl("live-music.webp")}
+								target="_blank"
+								rel="noreferrer"
+								aria-label="Открыть постер вечера живого звука"
+							>
+								<img
+									src={imageUrl("live-music.webp")}
+									alt="Постер «кАллигрАфия телА»: вечер живого звука 7 января"
+									width="1080"
+									height="1080"
+									loading="lazy"
+								/>
+							</a>
+							<div>
+								<AppText kind="overline" tone="accent">
+									7 января
 								</AppText>
-								<AppHeading level={3} kind="subsection" tone="inverse">
-									Когда музыка живая,
-									<br />
-									танец звучит иначе.
+								<AppHeading level={3} kind="subsection">
+									Вечер живого звука
 								</AppHeading>
-								<AppText tone="inverseMuted">
-									Вечер живого звука — возможность выдохнуть после занятий и
-									снова выйти на паркет. Программа на 2027 год уточняется.
+								<AppText tone="muted">
+									Танцевальный вечер с живым вокалом
+									<br />в МЦ «Содружество».
 								</AppText>
-								<span className="sound-waves" aria-hidden="true">
-									▂ ▅ ▃ ▇ ▄ ▂ ▆ ▃ ▅ ▇ ▂ ▄ ▆ ▃ ▅
-								</span>
-							</article>
-							<div className="experience-intro">
-								<div className="feature-line">
-									<IconCamera size={25} />
-									<div>
-										<AppHeading level={3} kind="card">
-											Сохранить своё движение
-										</AppHeading>
-										<AppText kind="compact" tone="muted">
-											Фото и видео, в которых виден ваш прогресс — и
-											удовольствие от танца.
-										</AppText>
-									</div>
-								</div>
-								<div className="feature-line">
-									<IconShoppingBag size={25} />
-									<div>
-										<AppHeading level={3} kind="card">
-											Найти свою новую любимую вещь
-										</AppHeading>
-										<AppText kind="compact" tone="muted">
-											Тренировочная одежда, платья и обувь от сибирских мастеров
-											и магазинов.
-										</AppText>
-									</div>
-								</div>
-								<div className="services-note">
-									<IconCheck size={18} />
-									<AppText kind="compact" tone="muted">
-										Ниже — подборка из Glamdance. Участие сервисов в сборах пока
-										не подтверждено.
-									</AppText>
-								</div>
 							</div>
 						</div>
 						<div className="service-grid">
@@ -545,21 +368,22 @@ export function App() {
 									key={service.slug}
 								>
 									<div className="service-top">
-										<span className={`service-monogram ${service.tone}`}>
-											{service.initials}
-										</span>
+										<img
+											className="service-avatar"
+											src={imageUrl(service.avatar)}
+											width="56"
+											height="56"
+											alt={service.name}
+											loading="lazy"
+										/>
 										<IconArrowUpRight size={19} />
 									</div>
-									<AppText kind="meta" tone="muted">
-										{service.category}
-									</AppText>
 									<AppHeading level={3} kind="card">
 										{service.name}
 									</AppHeading>
 									<AppText kind="compact" tone="muted">
-										{service.description}
+										{service.category}
 									</AppText>
-									<span className="service-link">Профиль на Glamdance</span>
 								</a>
 							))}
 						</div>
@@ -567,11 +391,7 @@ export function App() {
 				</section>
 
 				<section id="stories" className="section wrap">
-					<SectionTitle
-						eyebrow="У каждого движения есть история"
-						title="Как это было"
-						description="Маленькие открытия на занятии, разговоры у паркета и радость от того, что наконец получилось. Несколько моментов прошлых встреч."
-					/>
+					<SectionTitle title="Как это было" />
 					<div className="story-grid">
 						<article className="story story-large">
 							<img
@@ -582,13 +402,8 @@ export function App() {
 								loading="lazy"
 							/>
 							<div className="story-caption">
-								<AppText kind="overline" tone="inverseMuted">
-									01 / Вместе
-								</AppText>
 								<AppHeading level={3} kind="subsection" tone="inverse">
-									Тот самый момент,
-									<br />
-									когда вы — в одном ритме.
+									Танцевать вместе
 								</AppHeading>
 							</div>
 						</article>
@@ -597,17 +412,12 @@ export function App() {
 								src={imageUrl("coach.webp")}
 								width="900"
 								height="1125"
-								alt="Тренер подробно разбирает движение с участниками"
+								alt="Тренер разбирает движение с участниками"
 								loading="lazy"
 							/>
 							<div className="story-caption">
-								<AppText kind="overline" tone="inverseMuted">
-									02 / Внимание к деталям
-								</AppText>
 								<AppHeading level={3} kind="card" tone="inverse">
-									Один совет.
-									<br />
-									Совсем другое ощущение.
+									Работа над деталями
 								</AppHeading>
 							</div>
 						</article>
@@ -620,13 +430,8 @@ export function App() {
 								loading="lazy"
 							/>
 							<div className="story-caption">
-								<AppText kind="overline" tone="inverseMuted">
-									03 / Свобода
-								</AppText>
 								<AppHeading level={3} kind="card" tone="inverse">
-									Пробовать. Чувствовать.
-									<br />
-									Танцевать по-своему.
+									Свобода движения
 								</AppHeading>
 							</div>
 						</article>
@@ -636,15 +441,11 @@ export function App() {
 							src={imageUrl("together.webp")}
 							width="1080"
 							height="811"
-							alt="Общая фотография участников и тренеров сборов в спортивном зале"
+							alt="Участники и тренеры сборов в спортивном зале"
 							loading="lazy"
 						/>
 						<figcaption>
-							<AppText kind="label">Большая танцевальная семья</AppText>
-							<AppText kind="compact" tone="muted">
-								Фотографии из архива сборов. Подписи — редакционные, без цитат
-								участников.
-							</AppText>
+							<AppText kind="label">Участники и тренеры сборов</AppText>
 						</figcaption>
 					</figure>
 				</section>
@@ -652,15 +453,8 @@ export function App() {
 				<section id="contacts" className="section wrap contact-section">
 					<div className="contact-panel">
 						<div>
-							<AppText kind="overline" tone="accent">
-								Ваш январь начинается здесь
-							</AppText>
-							<AppHeading level={2}>Увидимся на паркете?</AppHeading>
-							<AppText tone="muted">
-								Выберите тренеров, задайте вопросы
-								<br className="desktop-word" /> и спланируйте три дня для себя и
-								танца.
-							</AppText>
+							<AppHeading level={2}>Запись на сборы</AppHeading>
+							<AppText tone="muted">Александр — организатор сборов.</AppText>
 							<AppButton
 								component="a"
 								href={phone}
@@ -672,7 +466,6 @@ export function App() {
 							</AppButton>
 						</div>
 						<div className="contact-information">
-							<AppText kind="label">Организатор · Александр</AppText>
 							<a className="phone-link" href={phone}>
 								+7 (913) 907-8-777
 							</a>
@@ -697,6 +490,40 @@ export function App() {
 						</div>
 					</div>
 				</section>
+
+				<section id="merch" className="section wrap merch-section">
+					<SectionTitle title="Мерч сборов" />
+					<div className="merch-grid">
+						{merch.map((product) => (
+							<article className="merch-card" key={product.image}>
+								<img
+									src={imageUrl(product.image)}
+									alt={`${product.name} «кАллигрАфия телА»`}
+									width="900"
+									height="683"
+									loading="lazy"
+								/>
+								<div className="merch-info">
+									<AppHeading level={3} kind="card">
+										{product.name}
+									</AppHeading>
+									<AppText kind="lead" tone="accent">
+										{rubles(product.price)}
+									</AppText>
+									<AppButton
+										component="a"
+										href={phone}
+										intent="secondary"
+										fullWidth
+										aria-label={`Заказать: ${product.name}`}
+									>
+										Заказать
+									</AppButton>
+								</div>
+							</article>
+						))}
+					</div>
+				</section>
 			</main>
 			<footer className="wrap site-footer">
 				<a className="brand" href="https://glamdance.ru/">
@@ -705,9 +532,6 @@ export function App() {
 				</a>
 				<AppText kind="compact" tone="muted">
 					кАллигрАфия телА · Зима 2027
-				</AppText>
-				<AppText kind="meta" tone="muted">
-					Демонстрационный лендинг · Не является офертой
 				</AppText>
 				<a
 					className="back-top"

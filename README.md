@@ -1,6 +1,6 @@
 # кАллигрАфия телА
 
-Демонстрационный лендинг зимних танцевальных сборов 5–7 января 2027 года в Новосибирске. Vite 8, React 19, Mantine 9. Оформление, локальные шрифты и semantic UI-компоненты перенесены из Glamdance.
+Лендинг зимних танцевальных сборов 5–7 января 2027 года в Новосибирске. Vite 8, React 19, Mantine 9. Оформление, локальные шрифты и semantic UI-компоненты перенесены из Glamdance.
 
 Сайт: https://alexeykupershtokh.github.io/aksenovdance/
 
@@ -29,16 +29,11 @@ bun run test:e2e
 
 ## Данные и публикация
 
-- `src/data.ts` — состав тренеров, демонстрационные места/цены, этапы повышения, ссылки сервисов.
-- `public/images/` — оптимизированные WebP из предоставленной папки; портреты вырезаны из афиши.
-- Даты, площадка, телефон и состав взяты с афиши; год указан пользователем. Фотоподписи редакционные. Сервисы найдены через Glamdance, их участие не подтверждено.
-- Цены, пакеты, даты повышения и остатки мест — примеры, а не реальные условия. Сайт не хранит заявки; запись согласуется с организатором по телефону.
-- Автоматический деплой через `.github/workflows/pages.yml` после проверок. `vite.config.ts` задаёт base `/aksenovdance/`. GitHub Pages должен использовать GitHub Actions.
-- Демонстрация закрыта от индексации через robots.txt и meta robots. Sitemap намеренно не публикуется. Перед реальным запуском подтвердить данные и пересмотреть индексацию.
+- `src/data.ts` — состав тренеров, свободные места и цены, этапы повышения, аватары и ссылки сервисов, товары мерча.
+- `public/images/` — локальные фотографии, исходная афиша, постер живого звука и фотографии мерча.
+- Аватары взяты из опубликованных профилей Glamdance через Imagor и сохранены локально в WebP.
+- Сайт статический: запись и заказ выполняются по телефону организатора, остатки редактируются вручную в данных.
+- `.github/workflows/pages.yml` проверяет код и Chromium перед публикацией. Base: `/aksenovdance/`.
+- Метаданные, robots.txt и sitemap.xml настроены для публичной индексации.
 
-Данные публичного каталога проверены 17 октября 2026 года:
-[Алексей Куперштох](https://glamdance.ru/s/akupershtokh),
-[svetlana_fotolifes](https://glamdance.ru/s/svetlana_fotolifes),
-[Dance ICON](https://glamdance.ru/s/danceicon_dw),
-[Танцевальный Бутик](https://glamdance.ru/s/dance_boutique),
-[Ольга Устинова-Занкина](https://glamdance.ru/s/olga_ustinova_zankina).
+Сервисы: [Алексей Куперштох](https://glamdance.ru/s/akupershtokh), [svetlana_fotolifes](https://glamdance.ru/s/svetlana_fotolifes), [Dance ICON](https://glamdance.ru/s/danceicon_dw), [Танцевальный Бутик](https://glamdance.ru/s/dance_boutique), [Ольга Устинова-Занкина](https://glamdance.ru/s/olga_ustinova_zankina).
