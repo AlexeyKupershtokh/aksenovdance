@@ -76,6 +76,34 @@ test("публичный лендинг: навигация, афиши, ава�
 			/\/aksenovdance\/images\/service-/,
 		);
 	await expect(page.locator(".merch-card")).toHaveCount(3);
+	// Риск браузерной вёрстки: блок уходит под мерч или обрезает длинные цитаты на телефоне.
+	const reviews = page.locator("#reviews");
+	await expect(
+		reviews.getByRole("heading", { name: "Отзывы участников" }),
+	).toBeVisible();
+	await expect(reviews.locator(".review-card")).toHaveCount(3);
+	const reviewLayout = await reviews.evaluate((section) => {
+		const cards = Array.from(section.querySelectorAll(".review-card"));
+		return {
+			columns: getComputedStyle(
+				section.querySelector(".reviews-grid") as Element,
+			).gridTemplateColumns.split(" ").length,
+			beforeMerch: section.nextElementSibling?.id === "merch",
+			unclipped: cards.every(
+				(card) =>
+					card.scrollWidth <= card.clientWidth &&
+					card.scrollHeight <= card.clientHeight,
+			),
+		};
+	});
+	expect(reviewLayout).toEqual({
+		columns: testInfo.project.name === "desktop" ? 3 : 1,
+		beforeMerch: true,
+		unclipped: true,
+	});
+	await reviews.screenshot({
+		path: `/tmp/aksenovdance-${testInfo.project.name}-reviews.png`,
+	});
 	for (const link of await page.locator(".merch-card a").all())
 		await expect(link).toHaveAttribute("href", "tel:+79139078777");
 	await expect(page.locator(".camp-poster img")).toBeAttached();

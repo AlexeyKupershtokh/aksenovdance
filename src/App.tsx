@@ -16,6 +16,7 @@ import {
 	categories,
 	imageUrl,
 	merch,
+	participantReviews,
 	phone,
 	priceStages,
 	rubles,
@@ -490,6 +491,34 @@ export function App() {
 								Посмотреть на карте <IconArrowUpRight size={16} />
 							</a>
 						</div>
+					</div>
+				</section>
+
+				<section
+					id="reviews"
+					className="section wrap reviews-section"
+					aria-labelledby="reviews-title"
+				>
+					<AppHeading level={2} id="reviews-title">
+						Отзывы участников
+					</AppHeading>
+					<div className="reviews-grid">
+						{participantReviews.map((review) => (
+							<figure className="review-card" key={review.subject}>
+								<AppText kind="label" tone="accent">
+									{review.subject}
+								</AppText>
+								<blockquote>
+									<AppText>«{review.text}»</AppText>
+								</blockquote>
+								<figcaption>
+									<AppText kind="label">{review.author}</AppText>
+									<AppText kind="compact" tone="muted">
+										{review.role}
+									</AppText>
+								</figcaption>
+							</figure>
+						))}
 					</div>
 				</section>
 
