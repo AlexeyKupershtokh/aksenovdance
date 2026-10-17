@@ -18,7 +18,7 @@ test("публичный лендинг: навигация, афиши, ава�
 			errors.push(`${response.status()} ${response.url()}`);
 	});
 	await page.goto("./");
-	await expect(page.locator("h1")).toHaveText("кАллигрАфиятелА.");
+	await expect(page.locator("h1")).toHaveText("кАллигрАфиятелА");
 	await expect(page.locator("h1")).toHaveCount(1);
 	await page.evaluate(() => document.fonts.ready);
 	await expect(page.locator("body")).not.toContainText(
@@ -79,6 +79,15 @@ test("публичный лендинг: навигация, афиши, ава�
 	for (const link of await page.locator(".merch-card a").all())
 		await expect(link).toHaveAttribute("href", "tel:+79139078777");
 	await expect(page.locator(".camp-poster img")).toBeAttached();
+	const posterWidth = await page
+		.locator(".camp-poster")
+		.evaluate((element) => element.getBoundingClientRect().width);
+	if (testInfo.project.name === "desktop")
+		expect(posterWidth).toBeGreaterThanOrEqual(440);
+	else
+		expect(posterWidth).toBeGreaterThanOrEqual(
+			(page.viewportSize()?.width ?? 360) - 48,
+		);
 	await expect(page.locator(".music-poster img")).toBeAttached();
 	await page.evaluate(async () => {
 		for (const image of document.images) {
@@ -188,4 +197,131 @@ test("цены и места в карточке каждой категории
 	await page.locator("#trainers").screenshot({
 		path: `/tmp/aksenovdance-${testInfo.project.name}-trainers.png`,
 	});
+});
+
+// Browser-only риски: lazy viewer, настоящий фокус, жесты/клавиатура и изоляция постеров; unit-тест не проверит их.
+test("фотогалерея и отдельные постеры: открытие, переключение, увеличение и закрытие", async ({
+	page,
+}, testInfo) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+	await page.goto("./");
+	const photos = page.locator(".story-grid a");
+	await expect(photos).toHaveCount(6);
+	const gallery = page.getByRole("dialog", { name: "Фотографии сборов" });
+	const currentImage = () =>
+		page.locator(".yarl__slide_current img.yarl__slide_image");
+	await photos.nth(3).click();
+	await expect(gallery).toBeVisible();
+	await expect(currentImage()).toHaveAttribute("src", /guidance\.webp$/);
+	await expect(
+		gallery.locator(
+			".yarl__thumbnails_thumbnail:not(.yarl__thumbnails_thumbnail_placeholder)",
+		),
+	).toHaveCount(6);
+	await gallery
+		.getByRole("button", { name: "Следующее фото", exact: true })
+		.click();
+	await expect(currentImage()).toHaveAttribute("src", /connection\.webp$/);
+	await page.keyboard.press("ArrowLeft");
+	await expect(currentImage()).toHaveAttribute("src", /guidance\.webp$/);
+	await gallery
+		.getByRole("button", { name: "Фото 5 из 6", exact: true })
+		.click();
+	await expect(currentImage()).toHaveAttribute("src", /connection\.webp$/);
+	await page.keyboard.press("ArrowLeft");
+	await expect(currentImage()).toHaveAttribute("src", /guidance\.webp$/);
+	if (testInfo.project.name !== "desktop") {
+		const session = await page.context().newCDPSession(page);
+		const viewport = page.viewportSize();
+		if (!viewport) throw new Error("Отсутствует mobile viewport");
+		const y = Math.round(viewport.height * 0.45);
+		await session.send("Input.dispatchTouchEvent", {
+			type: "touchStart",
+			touchPoints: [{ x: viewport.width - 45, y }],
+		});
+		for (let x = viewport.width - 65; x >= 45; x -= 25)
+			await session.send("Input.dispatchTouchEvent", {
+				type: "touchMove",
+				touchPoints: [{ x, y }],
+			});
+		await session.send("Input.dispatchTouchEvent", {
+			type: "touchEnd",
+			touchPoints: [],
+		});
+		await expect(currentImage()).toHaveAttribute("src", /connection\.webp$/);
+		await session.detach();
+	}
+	await page.screenshot({
+		path: `/tmp/aksenovdance-${testInfo.project.name}-gallery.png`,
+	});
+	await page.keyboard.press("Escape");
+	await expect(gallery).toHaveCount(0);
+	await expect(photos.nth(3)).toBeFocused();
+	for (const [index, photo] of [
+		"practice",
+		"coach",
+		"movement",
+		"guidance",
+		"connection",
+		"together",
+	].entries()) {
+		await photos.nth(index).click();
+		await expect(currentImage()).toHaveAttribute(
+			"src",
+			new RegExp(`${photo}\\.webp$`),
+		);
+		await gallery.getByRole("button", { name: "Закрыть", exact: true }).click();
+		await expect(gallery).toHaveCount(0);
+	}
+	for (const [selector, file] of [
+		[".camp-poster", "poster"],
+		[".music-poster", "live-music"],
+	]) {
+		const trigger = page.locator(selector);
+		await trigger.click();
+		const poster = page.getByRole("dialog", { name: "Просмотр постера" });
+		await expect(poster).toBeVisible();
+		await expect(currentImage()).toHaveAttribute(
+			"src",
+			new RegExp(`${file}\\.webp$`),
+		);
+		await expect(poster.locator(".yarl__thumbnails_container")).toHaveCount(0);
+		await expect(
+			poster.getByRole("button", { name: /Следующее|Предыдущее/ }),
+		).toHaveCount(0);
+		await expect(currentImage()).toBeVisible();
+		await expect
+			.poll(() =>
+				currentImage().evaluate((image) => {
+					const img = image as HTMLImageElement;
+					return img.complete && img.naturalWidth > 0;
+				}),
+			)
+			.toBe(true);
+		const box = await currentImage().boundingBox();
+		expect(box).not.toBeNull();
+		if (!box) throw new Error("Постер не виден");
+		expect(box.x).toBeGreaterThanOrEqual(0);
+		expect(box.y).toBeGreaterThanOrEqual(0);
+		expect(box.x + box.width).toBeLessThanOrEqual(
+			page.viewportSize()?.width ?? 0,
+		);
+		expect(box.y + box.height).toBeLessThanOrEqual(
+			page.viewportSize()?.height ?? 0,
+		);
+		await page.screenshot({
+			path: `/tmp/aksenovdance-${testInfo.project.name}-${file}-viewer.png`,
+		});
+		const zoom = poster.getByRole("button", { name: "Увеличить", exact: true });
+		await expect(zoom).toBeEnabled();
+		await zoom.click();
+		await expect(
+			poster.getByRole("button", { name: "Уменьшить", exact: true }),
+		).toBeEnabled();
+		await page.keyboard.press("Escape");
+		await expect(poster).toHaveCount(0);
+		await expect(trigger).toBeFocused();
+	}
+	expect(errors).toEqual([]);
 });

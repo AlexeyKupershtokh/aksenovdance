@@ -90,6 +90,51 @@ export const merch = [
 	{ name: "Рюкзак", image: "merch-backpack.webp", price: 8000 },
 ];
 
+export const storyPhotos = [
+	{
+		image: "practice.webp",
+		caption: "Танцевать вместе",
+		alt: "Пара отрабатывает движение на светлом паркете",
+		width: 900,
+		height: 900,
+	},
+	{
+		image: "coach.webp",
+		caption: "Работа над деталями",
+		alt: "Тренер разбирает движение с участниками",
+		width: 900,
+		height: 900,
+	},
+	{
+		image: "movement.webp",
+		caption: "Свобода движения",
+		alt: "Танцовщица в движении во время занятия",
+		width: 900,
+		height: 900,
+	},
+	{
+		image: "guidance.webp",
+		caption: "Точность жеста",
+		alt: "Тренер объясняет движение ученику",
+		width: 1080,
+		height: 1080,
+	},
+	{
+		image: "connection.webp",
+		caption: "Контакт в паре",
+		alt: "Педагог помогает танцовщице найти положение рук",
+		width: 1080,
+		height: 1080,
+	},
+	{
+		image: "together.webp",
+		caption: "Участники и тренеры сборов",
+		alt: "Участники и тренеры сборов в спортивном зале",
+		width: 1400,
+		height: 1056,
+	},
+] as const;
+
 export const sections = [
 	["about", "О сборах"],
 	["trainers", "Тренеры"],

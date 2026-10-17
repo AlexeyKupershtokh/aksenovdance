@@ -8,7 +8,7 @@ import {
 	IconPhone,
 	IconSnowflake,
 } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { AppButton } from "./components/ui/app-button";
 import { AppHeading, AppText } from "./components/ui/typography";
 import {
@@ -21,8 +21,11 @@ import {
 	rubles,
 	sections,
 	services,
+	storyPhotos,
 	trainers,
 } from "./data";
+
+const MediaLightbox = lazy(() => import("./components/media-lightbox"));
 
 function SectionTitle({
 	title,
@@ -47,6 +50,10 @@ export function App() {
 	const [rosterCategory, setRosterCategory] = useState<Category>("Стандарт");
 	const [activeSection, setActiveSection] = useState("about");
 	const navRef = useRef<HTMLElement>(null);
+	const [gallery, setGallery] = useState<{
+		index: number;
+		poster?: "poster.webp" | "live-music.webp";
+	} | null>(null);
 
 	useEffect(() => {
 		let frame = 0;
@@ -130,7 +137,6 @@ export function App() {
 							кАллигрАфия
 							<br />
 							<span className="title-accent">телА</span>
-							<span className="title-dot">.</span>
 						</AppHeading>
 						<AppText kind="lead" tone="muted" className="hero-lead">
 							Стандарт, латина и сибирские педагоги. Три дня групповых и
@@ -244,15 +250,24 @@ export function App() {
 					<a
 						className="camp-poster"
 						href={imageUrl("poster.webp")}
-						target="_blank"
-						rel="noreferrer"
+						onClick={(event) => {
+							if (
+								event.metaKey ||
+								event.ctrlKey ||
+								event.shiftKey ||
+								event.altKey
+							)
+								return;
+							event.preventDefault();
+							setGallery({ index: 0, poster: "poster.webp" });
+						}}
 						aria-label="Открыть афишу сборов"
 					>
 						<img
 							src={imageUrl("poster.webp")}
 							alt="Афиша сборов «кАллигрАфия телА» со всеми тренерами"
-							width="900"
-							height="1600"
+							width="1080"
+							height="1920"
 							loading="lazy"
 						/>
 					</a>
@@ -333,8 +348,17 @@ export function App() {
 							<a
 								className="music-poster"
 								href={imageUrl("live-music.webp")}
-								target="_blank"
-								rel="noreferrer"
+								onClick={(event) => {
+									if (
+										event.metaKey ||
+										event.ctrlKey ||
+										event.shiftKey ||
+										event.altKey
+									)
+										return;
+									event.preventDefault();
+									setGallery({ index: 0, poster: "live-music.webp" });
+								}}
 								aria-label="Открыть постер вечера живого звука"
 							>
 								<img
@@ -393,61 +417,39 @@ export function App() {
 				<section id="stories" className="section wrap">
 					<SectionTitle title="Как это было" />
 					<div className="story-grid">
-						<article className="story story-large">
-							<img
-								src={imageUrl("practice.webp")}
-								width="900"
-								height="1125"
-								alt="Пара отрабатывает движение на светлом паркете"
-								loading="lazy"
-							/>
-							<div className="story-caption">
-								<AppHeading level={3} kind="subsection" tone="inverse">
-									Танцевать вместе
-								</AppHeading>
-							</div>
-						</article>
-						<article className="story">
-							<img
-								src={imageUrl("coach.webp")}
-								width="900"
-								height="1125"
-								alt="Тренер разбирает движение с участниками"
-								loading="lazy"
-							/>
-							<div className="story-caption">
-								<AppHeading level={3} kind="card" tone="inverse">
-									Работа над деталями
-								</AppHeading>
-							</div>
-						</article>
-						<article className="story">
-							<img
-								src={imageUrl("movement.webp")}
-								width="900"
-								height="1125"
-								alt="Танцовщица в движении во время занятия"
-								loading="lazy"
-							/>
-							<div className="story-caption">
-								<AppHeading level={3} kind="card" tone="inverse">
-									Свобода движения
-								</AppHeading>
-							</div>
-						</article>
+						{storyPhotos.map((photo, index) => (
+							<a
+								className={`story ${index === 0 ? "story-large" : ""} ${index === 5 ? "story-group" : ""}`}
+								href={imageUrl(photo.image)}
+								key={photo.image}
+								aria-label={`Открыть фото: ${photo.caption}`}
+								onClick={(event) => {
+									if (
+										event.metaKey ||
+										event.ctrlKey ||
+										event.shiftKey ||
+										event.altKey
+									)
+										return;
+									event.preventDefault();
+									setGallery({ index });
+								}}
+							>
+								<img
+									src={imageUrl(photo.image)}
+									width={photo.width}
+									height={photo.height}
+									alt={photo.alt}
+									loading="lazy"
+								/>
+								<div className="story-caption">
+									<AppHeading level={3} kind="card" tone="inverse">
+										{photo.caption}
+									</AppHeading>
+								</div>
+							</a>
+						))}
 					</div>
-					<figure className="group-memory">
-						<img
-							src={imageUrl("together.webp")}
-							width="1080"
-							height="811"
-							alt="Участники и тренеры сборов в спортивном зале"
-							loading="lazy"
-						/>
-						<figcaption>
-							<AppText kind="label">Участники и тренеры сборов</AppText>
-						</figcaption>
-					</figure>
 				</section>
 
 				<section id="contacts" className="section wrap contact-section">
@@ -541,6 +543,34 @@ export function App() {
 					<IconArrowRight size={20} />
 				</a>
 			</footer>
+			{gallery && (
+				<Suspense fallback={null}>
+					<MediaLightbox
+						open
+						close={() => setGallery(null)}
+						single={Boolean(gallery.poster)}
+						index={gallery.index}
+						slides={
+							gallery.poster
+								? [
+										{
+											src: imageUrl(gallery.poster),
+											alt:
+												gallery.poster === "poster.webp"
+													? "Афиша сборов «кАллигрАфия телА»"
+													: "Постер вечера живого звука",
+										},
+									]
+								: storyPhotos.map((photo) => ({
+										src: imageUrl(photo.image),
+										alt: photo.alt,
+										width: photo.width,
+										height: photo.height,
+									}))
+						}
+					/>
+				</Suspense>
+			)}
 		</>
 	);
 }

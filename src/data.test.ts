@@ -1,8 +1,23 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
-import { categories, merch, priceStages, services, trainers } from "./data";
+import {
+	categories,
+	merch,
+	priceStages,
+	services,
+	storyPhotos,
+	trainers,
+} from "./data";
 
 describe("данные лендинга", () => {
+	test("риск пропуска или дублирования файлов галереи: шесть разных доступных фотографий", () => {
+		expect(storyPhotos).toHaveLength(6);
+		expect(new Set(storyPhotos.map((photo) => photo.image)).size).toBe(6);
+		for (const photo of storyPhotos)
+			expect(
+				existsSync(new URL(`../public/images/${photo.image}`, import.meta.url)),
+			).toBe(true);
+	});
 	test("риск потери состава афиши: 23 уникальные записи, три категории и портрет каждого", () => {
 		expect(trainers).toHaveLength(23);
 		expect(new Set(trainers.map((trainer) => trainer.name)).size).toBe(23);
