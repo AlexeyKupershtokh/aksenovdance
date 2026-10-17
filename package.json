@@ -1,0 +1,35 @@
+{
+	"name": "aksenovdance",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bun --bun vite --host 127.0.0.1 --port 4173",
+		"build": "tsc --noEmit && bun --bun vite build",
+		"preview": "bun --bun vite preview --host 127.0.0.1 --port 4173",
+		"validate": "tsc --noEmit",
+		"lint": "biome check .",
+		"test:unit": "bun test src/data.test.ts",
+		"test:e2e": "bun run build && bun --bun node_modules/@playwright/test/cli.js test"
+	},
+	"dependencies": {
+		"@fontsource/roboto": "5.2.10",
+		"@fontsource/roboto-mono": "5.2.9",
+		"@fontsource/roboto-serif": "5.2.9",
+		"@mantine/core": "9.5.1",
+		"@mantine/hooks": "9.5.1",
+		"@tabler/icons-react": "3.44.0",
+		"react": "19.2.4",
+		"react-dom": "19.2.4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.9",
+		"@playwright/test": "1.60.0",
+		"@types/bun": "latest",
+		"@types/react": "19.2.15",
+		"@types/react-dom": "19.2.3",
+		"@vitejs/plugin-react": "6.0.2",
+		"typescript": "6.0.3",
+		"vite": "8.0.14"
+	}
+}

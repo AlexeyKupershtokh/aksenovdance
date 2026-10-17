@@ -1,0 +1,86 @@
+.root {
+	font-size: var(--gd-type-text-label-size);
+	font-weight: var(--gd-font-weight-semibold);
+	line-height: var(--gd-type-text-label-line-height);
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease,
+		color 150ms ease,
+		box-shadow 150ms ease,
+		transform 100ms ease;
+}
+
+.root[data-intent="secondary"] {
+	--button-bd: 1px solid var(--mantine-color-gray-6);
+	--button-color: var(--ink, var(--mantine-color-dark-9));
+	--button-hover: var(--mantine-color-emerald-0);
+	--button-hover-color: var(--mantine-color-emerald-9);
+}
+
+.root[data-intent="quiet"] {
+	--button-color: var(--mantine-color-emerald-9);
+}
+
+.root[data-kind="navigation"] {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+	text-align: left;
+}
+
+.root[data-kind="navigation"] [class~="mantine-Button-label"] {
+	height: auto;
+	overflow: visible;
+	text-align: left;
+	white-space: normal;
+}
+
+.root[data-kind="navigation"]:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.root:focus-visible {
+	outline: 2px solid var(--mantine-color-emerald-6);
+	outline-offset: 2px;
+}
+
+.root[data-intent="danger"]:focus-visible,
+.root[data-intent="dangerQuiet"]:focus-visible {
+	outline-color: var(--mantine-color-red-9);
+}
+
+.root:active:not(:disabled, [data-disabled], [data-loading]) {
+	transform: translateY(1px);
+}
+
+.actionIcon {
+	flex: 0 0 auto;
+}
+
+.actionIcon[data-round] {
+	border-radius: 999px;
+}
+
+.filterChip {
+	--button-bd: 1px solid var(--mantine-color-gray-6);
+	--button-color: var(--ink, var(--mantine-color-dark-9));
+	--button-hover: var(--mantine-color-emerald-0);
+	--button-hover-color: var(--mantine-color-emerald-9);
+	font-size: var(--gd-type-text-label-size);
+	font-weight: var(--gd-font-weight-semibold);
+	line-height: var(--gd-type-text-label-line-height);
+}
+
+.filterChip[data-selected] {
+	--button-bg: var(--mantine-color-emerald-0);
+	--button-bd: 1px solid var(--mantine-color-emerald-6);
+	--button-color: var(--mantine-color-emerald-9);
+	--button-hover: var(--mantine-color-emerald-1);
+	--button-hover-color: var(--mantine-color-emerald-9);
+}
+
+.filterChip:focus-visible {
+	outline: 2px solid var(--mantine-color-emerald-6);
+	outline-offset: 2px;
+}

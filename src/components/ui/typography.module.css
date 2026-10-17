@@ -1,0 +1,118 @@
+.heading {
+	max-width: 100%;
+	color: var(--gd-type-color-default);
+	font-family: var(--gd-font-heading);
+	font-weight: var(--gd-font-weight-semibold);
+	text-wrap: balance;
+}
+
+.heading[data-role="display"] {
+	font-size: var(--gd-type-heading-display-size);
+	letter-spacing: var(--gd-type-heading-display-tracking);
+	line-height: var(--gd-type-heading-display-line-height);
+}
+
+.heading[data-role="page"] {
+	font-size: var(--gd-type-heading-page-size);
+	letter-spacing: var(--gd-type-heading-page-tracking);
+	line-height: var(--gd-type-heading-page-line-height);
+}
+
+.heading[data-role="section"] {
+	font-size: var(--gd-type-heading-section-size);
+	letter-spacing: var(--gd-type-heading-section-tracking);
+	line-height: var(--gd-type-heading-section-line-height);
+}
+
+.heading[data-role="subsection"] {
+	font-size: var(--gd-type-heading-subsection-size);
+	letter-spacing: var(--gd-type-heading-subsection-tracking);
+	line-height: var(--gd-type-heading-subsection-line-height);
+}
+
+.heading[data-role="card"] {
+	font-size: var(--gd-type-heading-card-size);
+	letter-spacing: var(--gd-type-heading-card-tracking);
+	line-height: var(--gd-type-heading-card-line-height);
+}
+
+.text {
+	max-width: 100%;
+	color: var(--gd-type-color-default);
+	font-family: var(--gd-font-body);
+}
+
+.text[data-role="lead"] {
+	font-size: var(--gd-type-text-lead-size);
+	font-weight: var(--gd-font-weight-regular);
+	line-height: var(--gd-type-text-lead-line-height);
+}
+
+.text[data-role="body"] {
+	font-size: var(--gd-type-text-body-size);
+	font-weight: var(--gd-font-weight-regular);
+	line-height: var(--gd-type-text-body-line-height);
+}
+
+.text[data-role="compact"] {
+	font-size: var(--gd-type-text-compact-size);
+	font-weight: var(--gd-font-weight-regular);
+	line-height: var(--gd-type-text-compact-line-height);
+}
+
+.text[data-role="meta"] {
+	font-size: var(--gd-type-text-meta-size);
+	font-weight: var(--gd-font-weight-regular);
+	line-height: var(--gd-type-text-meta-line-height);
+}
+
+.text[data-role="label"] {
+	font-size: var(--gd-type-text-label-size);
+	font-weight: var(--gd-font-weight-medium);
+	line-height: var(--gd-type-text-label-line-height);
+}
+
+.text[data-role="overline"] {
+	font-size: var(--gd-type-text-overline-size);
+	font-weight: var(--gd-font-weight-semibold);
+	letter-spacing: var(--gd-type-text-overline-tracking);
+	line-height: var(--gd-type-text-overline-line-height);
+	text-transform: uppercase;
+}
+
+.text[data-role="code"] {
+	font-family: var(--gd-font-mono);
+	font-size: var(--gd-type-text-code-size);
+	font-weight: var(--gd-font-weight-medium);
+	line-height: var(--gd-type-text-code-line-height);
+}
+
+.heading[data-tone="muted"],
+.text[data-tone="muted"] {
+	color: var(--gd-type-color-muted);
+}
+
+.heading[data-tone="accent"],
+.text[data-tone="accent"] {
+	color: var(--gd-type-color-accent);
+}
+
+.heading[data-tone="positive"],
+.text[data-tone="positive"] {
+	color: var(--gd-type-color-positive);
+}
+
+.heading[data-tone="danger"],
+.text[data-tone="danger"] {
+	color: var(--gd-type-color-danger);
+}
+
+.heading[data-tone="inverse"],
+.text[data-tone="inverse"] {
+	color: var(--gd-type-color-inverse);
+}
+
+.heading[data-tone="inverseMuted"],
+.text[data-tone="inverseMuted"] {
+	color: var(--gd-type-color-inverse-muted);
+}
