@@ -21,6 +21,41 @@ test("публичный лендинг: навигация, афиши, ава�
 	await expect(page.locator("h1")).toHaveText("кАллигрАфиятелА");
 	await expect(page.locator("h1")).toHaveCount(1);
 	await page.evaluate(() => document.fonts.ready);
+	const contact = page
+		.locator("header")
+		.getByRole("link", { name: /^Связаться/ });
+	await expect(contact).toHaveAccessibleName(
+		testInfo.project.name === "desktop"
+			? "Связаться с организатором"
+			: "Связаться",
+	);
+	if (testInfo.project.name === "desktop") {
+		// Риск: DOM содержит пробел, но flex-label схлопывает его на границе элементов.
+		const gap = await contact.evaluate((element) => {
+			const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+			const nodes: Text[] = [];
+			while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+			const first = nodes.find((node) => node.data.includes("Связаться"));
+			const second = nodes.find((node) =>
+				node.data.includes("с организатором"),
+			);
+			if (!first || !second)
+				throw new Error("В кнопке отсутствуют слова подписи");
+			const end = first.data.indexOf("Связаться") + "Связаться".length;
+			const start = second.data.indexOf("с организатором");
+			const word = document.createRange();
+			word.setStart(first, end - 1);
+			word.setEnd(first, end);
+			const preposition = document.createRange();
+			preposition.setStart(second, start);
+			preposition.setEnd(second, start + 1);
+			return (
+				preposition.getBoundingClientRect().left -
+				word.getBoundingClientRect().right
+			);
+		});
+		expect(gap).toBeGreaterThan(2);
+	}
 	await expect(page.locator("body")).not.toContainText(
 		/демонстрац|пример|по предоставленной|уточняется|не подтвержден|редакционн/i,
 	);

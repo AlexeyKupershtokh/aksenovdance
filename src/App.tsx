@@ -119,7 +119,9 @@ export function App() {
 						size="compact"
 						leftSection={<IconPhone size={16} />}
 					>
-						Связаться<span className="desktop-word"> с организатором</span>
+						<span>
+							Связаться<span className="desktop-word"> с организатором</span>
+						</span>
 					</AppButton>
 				</div>
 			</header>
